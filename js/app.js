@@ -28,10 +28,16 @@ function createForm(){
   divForm.parentNode.prepend(label);
 
   form = document.createElement('form');
-  form.append(createField(json.fields[0]));
+  json.fields.forEach((item, i) => {
+    form.append(createField(item));
+  });
   divForm.replaceWith(form);
+  let count = $("input[data-mask]").length;
+  for(let i = 0;i < count;i++)
+  {
+    $(`input[data-mask]:eq(${i})`).mask($(`input[data-mask]:eq(${i})`).attr("data-mask"));
+  }
 }
-
 
 function createField(field){
   //ParseLabel
@@ -42,11 +48,22 @@ function createField(field){
       labelElem.textContent = field.label;
   }
   let inputElem = document.createElement('input');
-  inputElem.type = field.input.type.toString();
+
+  if(field.input.type.toString()==="number"){
+    inputElem.type = "text";
+
+  }
+  else {
+      inputElem.type = field.input.type.toString();
+  }
   inputElem.classList.add('form-control');
 
   //isRequired
-  Boolean(field.input?.required.toString()) ? inputElem.required = true : inputElem.disabled = true;
+  Boolean(field.input?.required) ? inputElem.required = true : inputElem.disabled = true;
+
+  //mask
+  if (Boolean(field.input?.mask!==undefined))
+  inputElem.setAttribute("data-mask", field.input.mask);
 
   //ParseInput
   let elem = document.createElement('div');
