@@ -26,7 +26,7 @@ function createForm(){
 
   let label = document.createElement('h1');
   label.textContent = json.name.toString();
-  label.classList.add('display-2');
+  label.classList.add('display-3');
   label.classList.add('mb-4');
   label.classList.add('text-center');
   divForm.parentNode.prepend(label);
