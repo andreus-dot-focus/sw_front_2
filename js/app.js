@@ -1,7 +1,9 @@
 var json;
 var form;
+var loadForm;
 
 function getFile(input){
+  loadForm = document.getElementById("loadForm");
   let file = input.files[0];
 
   let reader = new FileReader();
@@ -11,6 +13,7 @@ function getFile(input){
     let data = reader.result;
     json = JSON.parse(data);
     createForm();
+    document.getElementById("footer").classList.remove("invisible");
     };
 
     reader.onerror = function(){
@@ -19,7 +22,7 @@ function getFile(input){
 }
 
 function createForm(){
-  let divForm = document.body.firstElementChild.firstElementChild;
+  let divForm = loadForm;
 
   let label = document.createElement('h1');
   label.textContent = json.name.toString();
@@ -34,6 +37,7 @@ function createForm(){
   });
   divForm.replaceWith(form);
   addMasks();
+
 }
 
 function createField(input, label){
@@ -142,4 +146,14 @@ function addMasks(){
 
 function createButton(){
 
+}
+
+function removeForm(){
+  let doc = document.getElementById("mainDiv");
+  doc.childNodes.forEach((item, i) => {
+    item.remove();
+  });
+  doc.append(loadForm);
+  document.getElementById("footer").classList.remove("invisible");
+  console.log(doc);
 }
