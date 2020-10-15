@@ -25,9 +25,9 @@ function createForm(){
   let divForm = loadForm;
 
   let label = document.createElement('h1');
-  label.textContent = json.name.toString();
-  label.classList.add('display-3');
-  label.classList.add('mb-4');
+  label.textContent = json.name.toString().replace(/_/g, " ");
+  label.classList.add('display-4');
+  label.classList.add('mb-5');
   label.classList.add('text-center');
   divForm.parentNode.prepend(label);
 
@@ -73,8 +73,9 @@ function createRefs(references){
   else if(label!==undefined){
     div = document.createElement("div");
     div.classList.add("form-group");
+    div.classList.add("d-flex");
+    div.classList.add("justify-content-between");
     for (var ref of references) {
-      console.log(ref);
       div.innerHTML += createRef(ref);
     }
     return div;
@@ -86,7 +87,10 @@ function createRef(label){
   labelElem.textContent = label?.text.toString();
   labelElem.href = label?.ref;
   if (label["text without ref"]===undefined){
-    return labelElem.outerHTML.toString()+" ";
+    aDiv = document.createElement("div");
+    aDiv.classList.add("text-center");
+    aDiv.innerHTML = labelElem.outerHTML.toString()+" ";
+    return aDiv.outerHTML;
   }
   else {
     return label["text without ref"]?.toString()+ " " + labelElem.outerHTML.toString();
