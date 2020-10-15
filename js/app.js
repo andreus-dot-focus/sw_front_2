@@ -35,10 +35,62 @@ function createForm(){
   json.fields.forEach((item, i) => {
     form.append(createField(item.input, item?.label));
   });
-  form.append(createRefs(json.references));
+
+  if(json.references!==undefined)
+  form.append(createRefs(json?.references));
+
+  if(json.buttons!==undefined)
+  form.append(createButtons(json?.buttons));
+
   divForm.replaceWith(form);
   addMasks();
+}
 
+function createButtons(buttons){
+  div = document.createElement('div');
+  div.classList.add("d-flex");
+  div.classList.add("justify-content-between");
+  div.classList.add("form-group");
+
+  for (var button of buttons) {
+    let butElem = document.createElement("button");
+    butElem.classList.add("btn");
+    butElem.classList.add("btn-primary");
+
+    butElem.textContent = button.text;
+    div.append(butElem);
+  }
+  return div;
+}
+
+function createRefs(references){
+  let input = references.find(item => item["input"]!==undefined);
+  let label = references.find(item => item["text"]!==undefined);
+
+  if(input!==undefined){
+    return createField(input.input, createRef(label));
+  }
+  else if(label!==undefined){
+    div = document.createElement("div");
+    div.classList.add("form-group");
+    for (var ref of references) {
+      console.log(ref);
+      div.innerHTML += createRef(ref);
+    }
+    return div;
+  }
+}
+
+function createRef(label){
+  let labelElem = document.createElement('a');
+  labelElem.textContent = label?.text.toString();
+  labelElem.href = label?.ref;
+  if (label["text without ref"]===undefined){
+    return labelElem.outerHTML.toString()+" ";
+  }
+  else {
+    return label["text without ref"]?.toString()+ " " + labelElem.outerHTML.toString();
+  }
 }
 
 function createField(input, label){
@@ -103,8 +155,6 @@ function createField(input, label){
   inputElem.setAttribute("data-mask", input.mask);
 
   //colors
-  // if(label.toString().contains("#"))
-  //   inputElem.setAttribute("style", `background-color: ${label};`);
   //placeholder
   if (Boolean(input?.placeholder!==undefined))
   inputElem.placeholder = input.placeholder;
@@ -118,22 +168,9 @@ function createField(input, label){
     elem.append(colorList);
   }
 
-  addClasses(elem, inputElem, labelElem);
+  addClassesInFields(elem, inputElem, labelElem);
 
   return elem;
-}
-
-function addClasses(div, input, label){
-  if(input.type === "checkbox"){
-    div.classList.add("form-check");
-    input.classList.add("form-check-input");
-    label?.classList.add("form-check-label");
-  }
-  else{
-    div.classList.add("form-group");
-    input.classList.add("form-control");
-    label?.classList.add("h5");
-  }
 }
 
 function addMasks(){
@@ -144,33 +181,16 @@ function addMasks(){
   }
 }
 
-function createRefs(references){
-  let input = references.find(item => item["input"]!==undefined);
-  let label = references.find(item => item["text"]!==undefined);
-
-  if(input!==undefined){
-    return createField(input.input, createRef(label));
+function addClassesInFields(div, input, label){
+  div.classList.add("form-group");
+  if(input.type === "checkbox"){
+    div.classList.add("form-check");
+    input.classList.add("form-check-input");
+    label?.classList.add("form-check-label");
   }
-  else if(label!==undefined){
-    div = document.createElement("div");
-    div.classList.add("form-group");
-    for (var ref of references) {
-      console.log(ref);
-      div.innerHTML += createRef(ref);
-    }
-    return div;
-  }
-}
-
-function createRef(label){
-  let labelElem = document.createElement('a');
-  labelElem.textContent = label?.text.toString();
-  labelElem.href = label?.ref;
-  if (label["text without ref"]===undefined){
-    return labelElem.outerHTML.toString()+" ";
-  }
-  else {
-    return label["text without ref"]?.toString()+ " " + labelElem.outerHTML.toString();
+  else{
+    input.classList.add("form-control");
+    label?.classList.add("h5");
   }
 }
 
