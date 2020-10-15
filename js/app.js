@@ -195,10 +195,8 @@ function addClassesInFields(div, input, label){
 }
 
 function removeForm(){
-  let doc = document.getElementById("mainDiv");
-  doc.childNodes.forEach((item, i) => {
-    item.remove();
-  });
+  let doc = document.getElementById('mainDiv');
+  doc.innerHTML = "";
   doc.append(loadForm);
   document.getElementById("footer").classList.add("invisible");
 }
