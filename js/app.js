@@ -5,12 +5,12 @@ var loadForm;
 function getFile(input){
   loadForm = document.getElementById("loadForm");
   let file = input.files[0];
-
   let reader = new FileReader();
   reader.readAsText(file);
 
   reader.onload = function(){
     let data = reader.result;
+    input.value = '';
     json = JSON.parse(data);
     createForm();
     document.getElementById("footer").classList.remove("invisible");
@@ -35,6 +35,7 @@ function createForm(){
   json.fields.forEach((item, i) => {
     form.append(createField(item.input, item?.label));
   });
+  form.append(createRefs(json.references));
   divForm.replaceWith(form);
   addMasks();
 
@@ -51,7 +52,7 @@ function createField(input, label){
   if(label !== undefined)
   {
       labelElem = document.createElement('label');
-      labelElem.textContent = label;
+      labelElem.innerHTML = label;
   }
   //ParseInput
   //type
@@ -108,7 +109,6 @@ function createField(input, label){
   if (Boolean(input?.placeholder!==undefined))
   inputElem.placeholder = input.placeholder;
 
-
   //for checkbox input first
   if (label!==undefined) elem.append(labelElem);
   input.type==="checkbox" ? elem.prepend(inputElem) : elem.append(inputElem);
@@ -144,8 +144,34 @@ function addMasks(){
   }
 }
 
-function createButton(){
+function createRefs(references){
+  let input = references.find(item => item["input"]!==undefined);
+  let label = references.find(item => item["text"]!==undefined);
 
+  if(input!==undefined){
+    return createField(input.input, createRef(label));
+  }
+  else if(label!==undefined){
+    div = document.createElement("div");
+    div.classList.add("form-group");
+    for (var ref of references) {
+      console.log(ref);
+      div.innerHTML += createRef(ref);
+    }
+    return div;
+  }
+}
+
+function createRef(label){
+  let labelElem = document.createElement('a');
+  labelElem.textContent = label?.text.toString();
+  labelElem.href = label?.ref;
+  if (label["text without ref"]===undefined){
+    return labelElem.outerHTML.toString()+" ";
+  }
+  else {
+    return label["text without ref"]?.toString()+ " " + labelElem.outerHTML.toString();
+  }
 }
 
 function removeForm(){
@@ -154,6 +180,5 @@ function removeForm(){
     item.remove();
   });
   doc.append(loadForm);
-  document.getElementById("footer").classList.remove("invisible");
-  console.log(doc);
+  document.getElementById("footer").classList.add("invisible");
 }
